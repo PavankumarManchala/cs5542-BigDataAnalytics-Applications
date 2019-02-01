@@ -1,37 +1,13 @@
+import org.apache.spark.{SparkConf,SparkContext}
 
-
-import org.apache.spark.{SparkContext, SparkConf}
-
-/**
-  * Created by Mayanka on 09-Sep-15.
-  */
-object SparkWordCount {
-
-  def main(args: Array[String]) {
-
-    System.setProperty("hadoop.home.dir","C:\\Users\\Pavankumar Manchala\\Downloads\\hadoop-2.7.7-src");
-
-    val sparkConf = new SparkConf().setAppName("SparkWordCount").setMaster("local[*]")
-
-    val sc=new SparkContext(sparkConf)
-
-    val input=sc.textFile("input")
-
-    val wc=input.flatMap(line=>{line.split(" ")}).map(word=>(word,1)).cache()
-
-    val output=wc.reduceByKey(_+_)
-
-    output.saveAsTextFile("output")
-
-    val o=output.collect()
-
-    var s:String="Words:Count \n"
-    o.foreach{case(word,count)=>{
-
-      s+=word+" : "+count+"\n"
-
-    }}
-
+object SparkWordCount{
+  def main(args: Array[String]): Unit ={
+    System.setProperty("hadoop.home.dir","C:\\Users\\Pavankumar Manchala\\Downloads\\hadoop-2.7.7-src")
+    val conf = new SparkConf().setAppName("group by example").setMaster("local").set("spark.driver.host","localhost")
+    val sc = new SparkContext(conf)
+    val f=sc.textFile("C:\\BigDataAnalyticsAppns\\ICP2\\CS5542-Tutorial2-SparkSourceCode\\Spark WordCount\\input")
+    val wc=f.flatMap(line=>{line.split(" ")})
+    val out=wc.groupBy(word=>word.charAt(0))
+    out.foreach(println)
   }
-
 }
